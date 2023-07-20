@@ -313,20 +313,21 @@ $liked = 0;
        
     }
 
-    function getMostUsedKeywords($postData) {
+    public function getMostUsedKeywords($postData) {
         $keywordCount = [];
+        $totalPostCount = count($postData);
     
         // Loop through each post and extract keywords
         foreach ($postData as $post) {
             $keywords = explode(",", $post['keywords']);
-            foreach ($keywords as $keyword) {
-                $keyword = trim($keyword);
-                if (!empty($keyword)) {
-                    if (isset($keywordCount[$keyword])) {
-                        $keywordCount[$keyword]++;
-                    } else {
-                        $keywordCount[$keyword] = 1;
-                    }
+            $postKeywords = array_map('trim', $keywords);
+            $postKeywords = array_filter($postKeywords);
+    
+            foreach ($postKeywords as $keyword) {
+                if (isset($keywordCount[$keyword])) {
+                    $keywordCount[$keyword]++;
+                } else {
+                    $keywordCount[$keyword] = 1;
                 }
             }
         }
@@ -335,9 +336,23 @@ $liked = 0;
         arsort($keywordCount);
     
         // Take the first two elements from the sorted array
-        $mostUsedKeywords = array_slice($keywordCount, 0, 2);
+        $mostUsedKeywordsWeekly = array_keys(array_slice($keywordCount, 0, 2));
     
-        return array_keys($mostUsedKeywords);
+        // Find keywords used in all posts commonly
+        $keywordsUsedInAllPosts = [];
+        foreach ($keywordCount as $keyword => $occurrenceCount) {
+            if ($occurrenceCount === $totalPostCount) {
+                $keywordsUsedInAllPosts[] = $keyword;
+            }
+        }
+    
+        // Ensure we have at most two keywords used commonly in all posts
+        $keywordsUsedInAllPosts = array_slice($keywordsUsedInAllPosts, 0, 2);
+    
+        return [
+            'mostUsedKeywordsWeekly' => $mostUsedKeywordsWeekly,
+            'keywordsUsedInAllPosts' => $keywordsUsedInAllPosts,
+        ];
     }
     // Method to send the FCM notification to all users
  
