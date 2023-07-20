@@ -16,6 +16,18 @@ class PostModel extends Model
     // ];
     protected $db;
     protected $updatedField = 'updated_at';
+    public function findPostById1($id)
+            {
+                $post = $this
+                ->asArray()
+                ->where(['post_id' => $id])
+                ->first();
+
+                if (!$post) 
+                throw new Exception('Post does not exist for specified id');
+    
+            return $post;
+            }
     public function findPostById($id)
     {
         $query = $this->db->table('sg_posts')

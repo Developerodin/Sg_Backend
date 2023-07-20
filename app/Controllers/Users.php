@@ -208,7 +208,7 @@ class Users extends BaseController
         try {
 
             $model = new PostModel();
-            $predata = $model->findPostById($id);
+            $predata = $model->findPostById1($id);
 
           $input = $this->getRequestInput($this->request);
         //   echo "<pre>"; print_r($predata['liked']);
@@ -217,9 +217,9 @@ class Users extends BaseController
           if ($input['like'] == '1') {
             $data['liked'] = $predata['liked']+1;
           }
-        //else if ($input['like'] == '0') {
-        //     $data['liked'] = $predata['liked']-1;
-        //   }
+        else if ($input['like'] == '0') {
+            $data['liked'] = $predata['liked']-1;
+          }
             $model->updatelike($id ,$data);
         //         echo "<pre>"; print_r($input);
         //   echo "</pre>";
