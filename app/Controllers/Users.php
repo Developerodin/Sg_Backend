@@ -13,12 +13,24 @@ class Users extends BaseController
 {
     public function index()
     {
+        $model1 = new UserModel();
+        $input = $this->getRequestInput($this->request);
+        $fcmToken = $input['fbtoken'];
+       $topic ="all_users";
+     $ret = $model1->subscribeToTopic($fcmToken, $topic);
+    //  echo "<pre>";print_r($ret);
+    //  echo "</pre>";
+    //  die();
         $model = new PostModel();
+        $posts = $model->get_post();
+      
+        $keywords =$model->getMostUsedKeywords($posts);
 
         return $this->getResponse(
             [
                 'message' => 'Post retrieved successfully',
-                'post' => $model->get_post()
+                'post' => $model->get_post(),
+                'keywords' => $keywords
             ]
         );
     }
@@ -214,6 +226,8 @@ class Users extends BaseController
         //   echo "<pre>"; print_r($predata['liked']);
         //   echo "</pre>";
         //   die;
+        $data['like'] = $input['like'];
+        $data['username'] = $input['username'];
           if ($input['like'] == '1') {
             $data['liked'] = $predata['liked']+1;
           }

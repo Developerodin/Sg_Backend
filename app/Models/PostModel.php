@@ -77,7 +77,7 @@ class PostModel extends Model
         // echo "<pre>"; print_r($post);
         // echo "</pre>";
         // die();
-
+      
         // $post = $this
         //     ->asArray()
         //     ->where(['created_by' => $id])
@@ -162,7 +162,9 @@ $date1 = date("m/d/Y h:i A");
         // echo "<pre>"; print_r($sql);
         // echo "</pre>";
         $post = $this->db->query($sql);
-        // $this->sendFcmNotification();
+        $title="New Post By";
+        $username=$user_name;
+        $this->sendFcmNotification($title,$username);
 
     if (!$post) 
         throw new Exception('Post does not exist for specified id');
@@ -257,6 +259,12 @@ $liked = 0;
         // echo "</pre>";
         $post = $this->db->query($sql);
         // $this->sendFcmNotification();
+        if($data['like'] === "1"){
+            $title=" Post Liked By";
+            $username=$data['username'];
+            $this->sendFcmNotification($title,$username);
+        }
+        
     if (!$post) 
         throw new Exception('Post does not exist for specified id');
 
@@ -305,17 +313,44 @@ $liked = 0;
        
     }
 
+    function getMostUsedKeywords($postData) {
+        $keywordCount = [];
+    
+        // Loop through each post and extract keywords
+        foreach ($postData as $post) {
+            $keywords = explode(",", $post['keywords']);
+            foreach ($keywords as $keyword) {
+                $keyword = trim($keyword);
+                if (!empty($keyword)) {
+                    if (isset($keywordCount[$keyword])) {
+                        $keywordCount[$keyword]++;
+                    } else {
+                        $keywordCount[$keyword] = 1;
+                    }
+                }
+            }
+        }
+    
+        // Sort keywords based on occurrences in descending order
+        arsort($keywordCount);
+    
+        // Take the first two elements from the sorted array
+        $mostUsedKeywords = array_slice($keywordCount, 0, 2);
+    
+        return array_keys($mostUsedKeywords);
+    }
     // Method to send the FCM notification to all users
-private function sendFcmNotification()
+ 
+    public function sendFcmNotification($title,$username)
 {
     $url = 'https://fcm.googleapis.com/fcm/send';
-    $serverKey = 'AAAAIsFx_XY:APA91bGG-IK95zxMfNlW3ZjhS_JQBQofgqDJf0pF1HSWhz7LXB5dKkVivBxIhAnPIwEwppFPP3U7thWznXGtarzAQLmMSaVhcjOQslx-ncGn40h8Z0z7PLrMq6hv3OJUdd_17nRYquRQ';
+    $serverKey = 'AAAAZVYW4AM:APA91bEcs2tl2ZpCNeikEAVNZUUXse2VxWoeQIKlOd_w8O0kvcMlLRlb-gcn9IlMF52ZNQpwd0T7xzl_c1xkkRcz4NgRq1rJ6_1dr53EskPXXQCkTpt-iTNNOLaDncdFgG3KTNdywXCE';
     
     $notificationData = [
         'to' => '/topics/all_users', // Specify the topic name here
         'notification' => [
-            'title' => 'akshay pareek',
-            'body' => 'Rich Notification testing (body)',
+            'title' => $title,
+            'body' => $username,
             'mutable_content' => true,
             'sound' => 'Tri-tone',
         ],

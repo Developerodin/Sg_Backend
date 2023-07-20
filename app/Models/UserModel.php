@@ -70,10 +70,7 @@ class UserModel extends Model
     public function update1($id ,$data)
     {
 
-// echo $id;
-//   echo "<pre>"; print_r($data);
-//           echo "</pre>";
-//           die;
+
 
         if (empty($data)) {
             echo "1";
@@ -112,5 +109,52 @@ class UserModel extends Model
     return $post;
 
        
+    }
+
+
+    public function subscribeToTopic($fcmToken, $topic)
+    {
+     
+        $url = 'https://iid.googleapis.com/iid/v1/' . $fcmToken . '/rel/topics/' . $topic;
+        $serverKey = 'AAAAZVYW4AM:APA91bEcs2tl2ZpCNeikEAVNZUUXse2VxWoeQIKlOd_w8O0kvcMlLRlb-gcn9IlMF52ZNQpwd0T7xzl_c1xkkRcz4NgRq1rJ6_1dr53EskPXXQCkTpt-iTNNOLaDncdFgG3KTNdywXCE';
+    
+        // Set up the HTTP headers for the request
+        $headers = [
+            'Content-Type: application/json',
+            'Authorization: key=' . $serverKey,
+        ];
+    
+        // Initialize cURL session
+        $ch = curl_init($url);
+    
+        // Set cURL options
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    
+        // Execute cURL session
+        $response = curl_exec($ch);
+        $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+// if ($httpStatusCode === 200) {
+//     $responseData = json_decode($response, true);
+//     echo 'Subscription successful. Response: ' . print_r($responseData, true);
+// } else {
+//     echo 'Subscription failed. HTTP Status Code: ' . $httpStatusCode . ', Response: ' . $response;
+// }
+//         echo "<pre>";print_r($response);
+//         echo "</pre>";
+//         die();
+        // Check for errors
+        if (curl_errno($ch)) {
+            $error = curl_error($ch);
+            // Handle the error as needed
+        }
+    
+        // Close cURL session
+        curl_close($ch);
+    
+        // Handle the response data as needed
+        // For example, you can return the response or echo it:
+        return $response;
     }
 }
