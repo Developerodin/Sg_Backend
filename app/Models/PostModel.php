@@ -71,6 +71,7 @@ class PostModel extends Model
         $query = $this->db->table('sg_posts')
                 ->select('sg_posts.*, sg_users.user_name, sg_users.dp_url') // Add other user details you want to fetch
                 ->join('sg_users', 'sg_users.user_id = sg_posts.created_by')
+                ->where('sg_posts.published', 1) // Add condition to filter posts where published = 1
                 ->get();
 
     $post = $query->getResultArray();
@@ -152,9 +153,9 @@ class PostModel extends Model
     $keywords = $data['keywords'];
     $published = $data['published'];
     $date = new DateTime();
-$date = date_default_timezone_set('Asia/Kolkata');
+    $date = date_default_timezone_set('Asia/Kolkata');
 
-$date1 = date("m/d/Y h:i A");
+     $date1 = date("m/d/Y h:i A");
     $liked = 0;
 
         $sql = "INSERT INTO `sg_posts` (`post_id`, `post_title`, `post_description`, `cover_image_url`, `liked`, `created_by`, `user_name`, `dp_url`, `timestamp`, `keywords`, `published`)
@@ -182,19 +183,50 @@ $date1 = date("m/d/Y h:i A");
             return true;
         }
 
-$user_id = $data['created_by'];
-$username = $data['user_name'];
-$dp_url = $data['dp_url'];
-$activity_name = "Posted";
-$activity_description = $data['post_description'];
-$post_id = $data['post_id'];
-$date = new DateTime();
-$date = date_default_timezone_set('Asia/Kolkata');
+       $user_id = $data['created_by'];
+       $username = $data['user_name'];
+       $dp_url = $data['dp_url'];
+       $activity_name = "Posted";
+       $activity_description = $data['post_description'];
+       $post_id = $data['post_id'];
+       $date = new DateTime();
+       $date = date_default_timezone_set('Asia/Kolkata');
 
-$date1 = date("m/d/Y h:i A");
+        $date1 = date("m/d/Y h:i A");
 
 
-$sql1 = "INSERT INTO `sg_activity_log` (`activity_log_id`, `user_id`,`username`, `dp_url`, `activity_name`, `activity_description`,  `post_id`, `timestamp`) VALUES (NULL, '$user_id', '$username', '$dp_url', '$activity_name', '$activity_description','$post_id','$date1')";
+      $sql1 = "INSERT INTO `sg_activity_log` (`activity_log_id`, `user_id`,`username`, `dp_url`, `activity_name`, `activity_description`,  `post_id`, `timestamp`) VALUES (NULL, '$user_id', '$username', '$dp_url', '$activity_name', '$activity_description','$post_id','$date1')";
+
+     $post1 = $this->db->query($sql1);
+
+
+    if (!$post1) 
+        throw new Exception('Post does not save specified post');
+
+    return $post1;
+
+       
+    }
+    public function activitylike($data ,$id): bool
+    {
+        if (empty($data)) {
+            echo "1";
+            return true;
+        }
+
+       $user_id = $data['user_id'];
+       $username = $data['user_name'];
+       $dp_url = $data['dp_url'];
+       $activity_name = "Like";
+       $activity_description = $data['post_description'];
+       $post_id = $id;
+       $date1 = new DateTime();
+       $date1 = date_default_timezone_set('Asia/Kolkata');
+
+        $date1 = date("m/d/Y h:i A");
+
+
+      $sql1 = "INSERT INTO `sg_activity_log` (`activity_log_id`, `user_id`,`username`, `dp_url`, `activity_name`, `activity_description`,  `post_id`, `timestamp`) VALUES (NULL, '$user_id', '$username', '$dp_url', '$activity_name', '$activity_description','$post_id','$date1')";
 
      $post1 = $this->db->query($sql1);
 
@@ -259,11 +291,11 @@ $liked = 0;
         // echo "</pre>";
         $post = $this->db->query($sql);
         // $this->sendFcmNotification();
-        if($data['like'] === "1"){
-            $title=" Post Liked By";
-            $username=$data['username'];
-            $this->sendFcmNotification($title,$username);
-        }
+        // if($data['like'] === "1"){
+        //     $title=" Post Liked By";
+        //     $username=$data['username'];
+        //     $this->sendFcmNotification($title,$username);
+        // }
         
     if (!$post) 
         throw new Exception('Post does not exist for specified id');

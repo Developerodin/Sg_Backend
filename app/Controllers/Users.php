@@ -121,6 +121,7 @@ class Users extends BaseController
         $post = $model->where('post_title', $post_title)->first();
        
        $input['post_id'] = $post['post_id'];
+      
 
          $model->activity($input);
         return $this->getResponse(
@@ -235,10 +236,15 @@ class Users extends BaseController
             $data['liked'] = $predata['liked']-1;
           }
             $model->updatelike($id ,$data);
-        //         echo "<pre>"; print_r($input);
-        //   echo "</pre>";
+      
             $post = $model->findPostById($id);
-
+          
+          $data['post_description'] = $input['post_description'];
+            $data['user_name'] = $input['username'];
+            $data['user_id'] = $input['user_id'];
+            $data['dp_url'] = $input['dp_url'];
+          
+           $model->activitylike($data,$id);
             return $this->getResponse(
                 [
                     'message' => 'post like updated successfully',
