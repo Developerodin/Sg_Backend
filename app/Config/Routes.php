@@ -36,8 +36,7 @@ $routes->get('/users', 'Users::index');
 
 $routes->post('/auth/login', 'Auth::login');
 $routes->post('/auth/register', 'Auth::register');
-$routes->post('/users/reset_pass/(:num)', 'Users::rest_pass/$1');
-
+$routes->post('/users/reset_pass/(:num)', 'Users::reset_pass/$1');
 $routes->post('/users/get_home', 'Users::index');
 $routes->post('/users/post_gratitude', 'Users::store');
 $routes->get('/users/post_id/(:num)', 'Users::show/$1');

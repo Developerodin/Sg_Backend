@@ -26,12 +26,15 @@ class Auth extends BaseController
         ];
       
        $input = $this->getRequestInput($this->request);
-      
+    //    echo "<pre>";
+    //    print_r($input);
+    //    echo "</pre>";
+    //    die();
         $data =[
             'user_name' => $input['user_name'],
             'pin' => password_hash($input['pin'], PASSWORD_DEFAULT),
         ];
-
+// echo json_encode($data);
 
        $userModel = new UserModel(); 
 
@@ -43,7 +46,11 @@ class Auth extends BaseController
            );
       
     }
-    
+public function validuser($data){
+ 
+
+
+}
     /**
      * Authenticate Existing User
      * @return Response
