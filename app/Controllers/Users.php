@@ -86,6 +86,28 @@ class Users extends BaseController
             );
         }
     }
+    public function reset_pass($id)
+    {
+
+
+        $rules = [
+            'user_name' => 'required',
+            'pin' => 'required|min_length[4]'
+        ];
+       $input = $this->getRequestInput($this->request);
+      
+        $data =[
+            'pin' => password_hash($input['pin'], PASSWORD_DEFAULT),
+        ];
+       $userModel = new UserModel(); 
+           $userModel->update($data,$id);
+           return $this->getResponse(
+            [
+                'message' => 'Pin updated successfully',
+                
+            ]
+        );
+    }
 
     public function store()
     {
