@@ -8,11 +8,11 @@ use Exception;
 class UserModel extends Model
 {
     protected $table = 'sg_users';
-   
-    protected $allowedFields = [
-        'user_name',
-        'pin',
-    ];
+    protected $db;
+    // protected $allowedFields = [
+    //     'user_name',
+    //     'pin',
+    // ];
     protected $updatedField = 'updated_at';
 
     protected $beforeInsert = ['beforeInsert'];
@@ -67,11 +67,29 @@ class UserModel extends Model
         return $user;
     }
     
+    public function update($id ,$data)
+    {
+        if (empty($data)) {
+            echo "1";
+            return true;
+        }
+
+    $user_name = $data['pin'];
+   
+        $sql = "UPDATE `sg_users` SET  
+        user_name = '$user_name',
+        WHERE user_id = $id";
+        
+        $post = $this->db->query($sql);
+    if (!$post) 
+        throw new Exception('user not updated');
+
+    return $post;
+
+       
+    }
     public function update1($id ,$data)
     {
-
-
-
         if (empty($data)) {
             echo "1";
             return true;
@@ -104,13 +122,42 @@ class UserModel extends Model
         // echo "</pre>";
         $post = $this->db->query($sql);
     if (!$post) 
+        throw new Exception('user not updated');
+
+    return $post;
+
+       
+    }
+    public function save($data): bool
+    {
+
+    $user_name = $data['user_name'];
+    $pin = $data['pin'];
+    $dp_url = "";
+    $about_me = "";
+    $status = "";
+    $cover_img = "";
+   
+    $sql = "INSERT INTO `sg_users` (`user_id`, `user_name`,
+    `dp_url`,
+    `about_me`,
+    `status`,
+    `cover_img`,
+    `pin`) VALUES (NULL, '$user_name', 
+    '$dp_url',
+    '$about_me',
+    '$status',
+    '$cover_img',
+    '$pin')";
+    echo $sql;
+        $post = $this->db->query($sql);
+    if (!$post) 
         throw new Exception('Post does not exist for specified id');
 
     return $post;
 
        
     }
-
 
     public function subscribeToTopic($fcmToken, $topic)
     {

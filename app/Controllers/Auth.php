@@ -31,7 +31,7 @@ class Auth extends BaseController
             'user_name' => $input['user_name'],
             'pin' => password_hash($input['pin'], PASSWORD_DEFAULT),
         ];
-// echo json_encode($data);
+
 
        $userModel = new UserModel(); 
 
@@ -43,11 +43,26 @@ class Auth extends BaseController
            );
       
     }
-public function validuser($data){
- 
+    public function reset_pass($id)
+    {
 
 
-}
+        $rules = [
+            'user_name' => 'required',
+            'pin' => 'required|min_length[4]'
+        ];
+       $input = $this->getRequestInput($this->request);
+      
+        $data =[
+            'pin' => password_hash($input['pin'], PASSWORD_DEFAULT),
+        ];
+       $userModel = new UserModel(); 
+           $userModel->update($data,$id);
+           return $this->getJWTForNewUser(
+               ResponseInterface::HTTP_CREATED
+           );
+    }
+
     /**
      * Authenticate Existing User
      * @return Response
